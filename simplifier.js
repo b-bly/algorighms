@@ -41,7 +41,8 @@ class Simplifier {
    * @param {string} expression
    */
   splitExpression(expression) {
-    return expression.split(/(?!^)-|\+/);
+    const keepSign = /(?=[-+])/g
+    return expression.split(keepSign); // (/(?!^)-|\+/)
   }
 
   /**
@@ -91,30 +92,17 @@ class Simplifier {
           0
         );
         let term = coefficientSum.toString() + variable;
-        if (coefficientSum === 1) { term = variable }
-        if (coefficientSum === -1) { term = '-' + variable }
+        if (coefficientSum === 0) { 
+            term = '' 
+        } else if (coefficientSum === 1) { 
+            term = variable 
+        } else if (coefficientSum === -1) { 
+            term = '-' + variable 
+        }
         if (!/-/.test(term) && i !== 0) { term = '+' + term }
         return term
       })
       .join("");
-    // const additionSymbol = '\\+'
-    // const [left, right] = this.getTerms(expression, additionSymbol)
-    // const leftCoefficient = this.getCoefficient(left)
-    // const rightCoefficient = this.getCoefficient(right)
-    // const leftVariable = this.getVariable(left)
-    // const rightVariable = this.getVariable(right)
-    // if (rightVariable === leftVariable) {
-    //     const sum = (leftCoefficient + rightCoefficient).toString()
-    //     if (sum === '0') {
-    //         return ''
-    //     } else if (sum === '-1') {
-    //         return '-' + leftVariable
-    //     } else {
-    //         return sum + leftVariable
-    //     }
-    // } else {
-    //     return expression
-    // }
   }
 
   getVariable(term) {
@@ -143,31 +131,10 @@ class Simplifier {
     }
     return negative ? parseInt("-" + number) : parseInt(number);
   }
-
-  subtract(expression) {
-    const subtractionSymbol = "-";
-    const [left, right] = this.getTerms(expression, subtractionSymbol);
-    const leftCoefficient = this.getCoefficient(left);
-    const rightCoefficient = this.getCoefficient(right);
-    const leftVariable = this.getVariable(left);
-    const rightVariable = this.getVariable(right);
-    if (rightVariable === leftVariable) {
-      const sum = (leftCoefficient - rightCoefficient).toString();
-      if (sum === "0") {
-        return "";
-      } else if (sum === "-1") {
-        return "-" + leftVariable;
-      } else {
-        return sum + leftVariable;
-      }
-    } else {
-      return expression;
-    }
-  }
 }
 
 const simplifier = new Simplifier([], "");
-const result = simplifier.add("-2a-a+5x");
+const result = simplifier.add('2a-a+b');
 console.log(result);
 
 module.exports = Simplifier;

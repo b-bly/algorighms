@@ -23,22 +23,19 @@ describe('Simplifier', () => {
             const actual = simplifier.add('-2a+a')
             expect(actual).toBe('-a')
         })
-    })
 
-    describe('subtract', () => {
-        
         it('Should subtract terms without coefficients', () => {
-            const actual = simplifier.subtract('b-b')
+            const actual = simplifier.add('b-b')
             expect(actual).toBe('')
         })
 
         it('Should subtract terms with coefficients', () => {
-            const actual = simplifier.subtract('2a-3a')
+            const actual = simplifier.add('2a-3a')
             expect(actual).toBe('-a')
         })
 
         it('Should subtract terms with one negative coefficient', () => {
-            const actual = simplifier.subtract('-2a-a')
+            const actual = simplifier.add('-2a-a')
             expect(actual).toBe('-3a')
         })
     })
