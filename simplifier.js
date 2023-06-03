@@ -69,14 +69,12 @@ class Simplifier {
   add(expression) {
     const expressionArray = this.splitExpression(expression);
     const variables = this.getVariables(expressionArray);
-    console.log(variables)
     return variables
-      .map((variable) => {
+      .map((variable, i) => {
         // get terms containing variable
         let terms = expressionArray.filter((expression) =>
           expression.includes(variable)
         );
-        console.log("terms", terms);
         const coefficientGroup = terms.map((term) => {
           let sign = "";
           if (/-/.test(term)) {
@@ -88,15 +86,14 @@ class Simplifier {
           }
           return parseInt(sign + value);
         });
-        console.log("coefficientGroup", coefficientGroup);
         const coefficientSum = coefficientGroup.reduce(
           (acc, number) => (acc += number),
           0
         );
-        console.log("coefficientSum");
-        console.log(coefficientSum);
         let term = coefficientSum.toString() + variable;
-        if (!/-/.test(term)) { term = '+' + term }
+        if (coefficientSum === 1) { term = variable }
+        if (coefficientSum === -1) { term = '-' + variable }
+        if (!/-/.test(term) && i !== 0) { term = '+' + term }
         return term
       })
       .join("");
