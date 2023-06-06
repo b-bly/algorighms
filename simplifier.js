@@ -25,8 +25,8 @@ function onlyUnique(value, index, array) {
     return array.indexOf(value) === index
 }
 
-const innermostParenthesis = /(?:\d*)\(((?:"\(|\)"|[^()])+)\)/ // group 1: coeff group 2: expression
-const innermostParenthesisWithCoeff = /(\d+)\((?:"\(|\)"|[^()])+\)/ // group 1: coeff group 2: expression
+const innermostParenthesis = /(?:-*\d*)\(((?:"\(|\)"|[^()])+)\)/ // group 1: coeff group 2: expression
+const innermostParenthesisWithCoeff = /(-*\d+)\((?:"\(|\)"|[^()])+\)/ // group 1: coeff group 2: expression
 const innermostParenthesisAndSign = /(?:[+-])?(?:\d+)?\((?:"\(|\)"|[^()])+\)/ // /(?:[+-]\d+)?(?:\d+)?\((?:"\(|\)"|[^()])+\)/ // /(?:[+-])?(?:\d+)?\((?:"\(|\)"|[^()])+\)/;
 
 class Simplifier {
@@ -222,7 +222,7 @@ class Simplifier {
 }
 
 const simplifier = new Simplifier([], '')
-const result = simplifier.simplify('-(-2a-a)')
+const result = simplifier.simplify('4(b-2(-2a-a))')
 console.log(result)
 
 module.exports = Simplifier
