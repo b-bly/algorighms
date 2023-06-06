@@ -11,7 +11,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/simplifier.js"
+            "program": "${workspaceFolder}/simplifier.js",
+            "runtimeVersion": "18"
         }
     ]
 }
