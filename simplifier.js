@@ -27,7 +27,7 @@ function onlyUnique(value, index, array) {
 
 const innermostParenthesis = /(?:\d*)\(((?:"\(|\)"|[^()])+)\)/ // group 1: coeff group 2: expression
 const innermostParenthesisWithCoeff = /(\d+)\((?:"\(|\)"|[^()])+\)/ // group 1: coeff group 2: expression
-const innermostParenthesisAndSign = /(?:[+-]\d+)?(?:\d+)?\((?:"\(|\)"|[^()])+\)/ // /(?:[+-])?(?:\d+)?\((?:"\(|\)"|[^()])+\)/;
+const innermostParenthesisAndSign = /(?:[+-])?(?:\d+)?\((?:"\(|\)"|[^()])+\)/ // /(?:[+-]\d+)?(?:\d+)?\((?:"\(|\)"|[^()])+\)/ // /(?:[+-])?(?:\d+)?\((?:"\(|\)"|[^()])+\)/;
 
 class Simplifier {
     constructor(equalities, formula) {
@@ -107,12 +107,18 @@ class Simplifier {
 
     getInnerMostParenthesis(expression) {
         const match = expression.match(innermostParenthesis)
-        const coeff = expression.match(innermostParenthesisWithCoeff)
+        let coeff = expression.match(innermostParenthesisWithCoeff)
         console.log('coeff', coeff)
         if (coeff?.length > 1) {
             return [coeff[1], match[1]]
         }
-        return [1, match[1]]
+        // There is no sign in front of coeff
+        coeff = 1
+        const signMatch = expression.match(/(-)\(("\(|\)"|[^()])+\)/)
+        if (signMatch !== null) {
+            coeff = -1
+        }
+        return [coeff, match[1]]
     }
 
     // Distribute, add
@@ -216,7 +222,7 @@ class Simplifier {
 }
 
 const simplifier = new Simplifier([], '')
-const result = simplifier.simplify('4(b+2(-2a-a))')
+const result = simplifier.simplify('-(-2a-a)')
 console.log(result)
 
 module.exports = Simplifier

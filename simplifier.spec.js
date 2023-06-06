@@ -51,10 +51,10 @@ describe('Simplifier', () => {
             expect(actual).toBe('-3a')
         })
 
-        // it('Should simplify expressions with a leading -', () => {
-        //     const actual = simplifier.simplify('-(-2a-a)')
-        //     expect(actual).toBe('-3a')
-        // })
+        it('Should simplify expressions with a leading -', () => {
+            const actual = simplifier.simplify('-(-2a-a)')
+            expect(actual).toBe('3a')
+        })
 
         it('Should simplify expressions with parenthesis and distribute a coeff to parenthesis', () => {
             const actual = simplifier.simplify('2(-2a-a)')
