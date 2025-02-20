@@ -1,3 +1,4 @@
+// https://www.codewars.com/kata/57f2b753e3b78621da0020e8
 // identify left and right sides
 
 // look for innermost parenthesis
@@ -28,17 +29,83 @@ function onlyUnique(value, index, array) {
 const innermostParenthesis = /(?:-*\d*)\(((?:"\(|\)"|[^()])+)\)/ // group 1: coeff group 2: expression
 const innermostParenthesisWithCoeff = /(-*\d+)\((?:"\(|\)"|[^()])+\)/ // group 1: coeff group 2: expression
 const innermostParenthesisAndSign = /(?:[+-])?(?:\d+)?\((?:"\(|\)"|[^()])+\)/ // /(?:[+-]\d+)?(?:\d+)?\((?:"\(|\)"|[^()])+\)/ // /(?:[+-])?(?:\d+)?\((?:"\(|\)"|[^()])+\)/;
+const leftSideRegex = /(.+)(=.+)/
+const rightSideRegex = /(.+=)(.+)/
 
 class Simplifier {
     constructor(equalities, formula) {
-        this.equalities = equalities.map((equality) => equality.trim())
+        this.equalities = equalities.map((equality) => this.simplifyEquation(equality.trim()))
         this.formula = formula.trim()
+        const expressionArray = this.splitExpression(formula)
+    }
+
+    // probably don't need
+    validateExpression(expression) {
+        // const variables = this.getVariables(expressionArray)
+        // const uniqueVariables = this.getUniqueVariables(expressionArray)
+        // const counts = {};
+        // for (const variable of variables) {
+        //     counts[variable] = counts[variable] ? counts[variable] + 1 : 1;
+        // }
+        // for (let key of counts) {
+        //     if (counts[key] > 1) { throw new Error('There is more than one ')}
+        // }
+    }
+
+    /**
+     * Return a simplified expression by substitution with equations.
+     * @param {string} expression
+     * @param {string[]} equations
+     */
+    substituteAll(expression, equations, times = equations.length) {
+        // substitute
+        // assume var is on the right of equation
+        // substitute for the var
+        // sign and coef can be taken into account by simplify method?  Replace using parenthesis
+        // try equations.length times to make a substitution and unshift each time an eq is used?
+        let updatedExpression
+        let remainingEquations
+        equations.forEach((equation) => {
+            const variable = this.getRightSideVariable(equation)
+            if (this.canSubstitute(expression, variable)) {
+                const result = this.substitute(expression, equation, variable)
+                
+            } else {
+                remainingEquations.push(equation)
+            }
+        })
+        return this.substituteAll(expression, remainingEquations, --times)
+
+        // repeat until options exhausted and select simplest iteration
+        // simplify resulting expression
+        // Maybe will refactor to look for simplest expression.
+    }
+
+    // assume right side is a variable with no coefficient or sign
+    getRightSideVariable(equation) {
+        const variable = equation.match(rightSideRegex[0])
+        if (variable.length > 1) {
+            throw new Error(`Right side of equation has more than one character: ${equation}`)
+        }
+        return variable
+    }
+
+    // replaces the variable in the expression with the left side of the equation given wrapped in ()
+    // x - y, y = 2x, y => x - (2x)
+    substitute(expression, equation, variable) {
+        const substitution = equation.match(leftSideRegex)[0]
+        if 
+        return expression.replace(variable, '(' + substitution + ')')
+    }
+
+    canSubstitute(expression, equation, variable) {
+        return expression.includes(variable)
     }
 
     // need to refactor to handle * and / terms
     add(expression) {
         const expressionArray = this.splitExpression(expression)
-        const variables = this.getVariables(expressionArray)
+        const variables = this.getUniqueVariables(expressionArray)
         return variables
             .map((variable, i) => {
                 // get terms containing variable
@@ -75,7 +142,7 @@ class Simplifier {
      * @param {number} multiplier
      * @param {string} expression 2a-1
      */
-    simplify(expression) {
+    simplifyExpression(expression) {
         // while still parenthesis, add
         if (this.hasParenthesis(expression)) {
             // evaluate innermost parenthesis
@@ -83,11 +150,20 @@ class Simplifier {
             expression = this.replaceParentheticalExpression(expression, evaluatedExpression)
             console.log(expression)
             if (innermostParenthesis.test(expression) === true) {
-                return this.simplify(expression)
+                return this.simplifyExpression(expression)
             }
         }
         // final adding terms if needed
         return this.add(expression)
+    }
+
+    simplifyEquation(equation) {
+        function replacer(match, p1, p2, offset, string, groups) {
+            const replacement = this.simplifyExpression(p1) + p2
+            return replacement
+        }
+        const simplifiedEquation = equation.replace(replacer)
+        return simplifiedEquation
     }
 
     replaceParentheticalExpression(expression, evaluatedExpression) {
@@ -144,10 +220,18 @@ class Simplifier {
 
     // Solve for variable
     // Check espression with canSolve first
-    solve(variable, expression) {}
+    solve(variable, expression) {
+        if (!this.canSolve(variable, expression)) {
+            throw new Error('Unsolvable for this var.')
+        }
+    }
 
     // check if there is only one occurance variable
-    canSolve(variable, expression) {}
+    canSolve(variable, expression) {
+        const expressionArray = this.splitExpression(expression)
+        const variables = this.getVariables(expressionArray)
+        return variables.includes(variable) !== -1
+    }
 
     parseTermSign(term) {
         let sign = ''
@@ -185,12 +269,17 @@ class Simplifier {
     }
 
     /**
-     * returns an array of variables in the expression [2x, -3y, y] => [x, y]
+     * returns an array of variables in the expression [2x, -3y, y] => [x, y, y]
      * @param {array} expressionArray array returned by splitExpression
      * This does not handle terms with multiple variables
      */
     getVariables(expressionArray) {
-        return expressionArray.map((term) => this.parseVariable(term)).filter(onlyUnique)
+        return expressionArray.map((term) => this.parseVariable(term))
+    }
+
+    // returns uniqu array [2x, -3y, y] => [x, y]
+    getUniqueVariables(arr) {
+        return this.getVariables(arr).filter(onlyUnique)
     }
 
     parseVariable(term) {
@@ -222,7 +311,7 @@ class Simplifier {
 }
 
 const simplifier = new Simplifier([], '')
-const result = simplifier.simplify('4(b-2(-2a-a))')
+const result = simplifier.simplifyExpression('4(b-2(-2a-a))')
 console.log(result)
 
 module.exports = Simplifier
