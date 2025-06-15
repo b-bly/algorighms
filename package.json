@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "eslint --ignore-path .gitignore .",
     "lint:fix": "npm run lint -- --fix",
-    "test": "jest",
+    "test": "mocha",
     "watch": "tsc -w"
   },
   "author": "",
@@ -28,5 +28,9 @@
   "directories": {
     "test": "tests"
   },
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "chai": "^5.2.0",
+    "mocha": "^11.5.0"
+  }
 }
