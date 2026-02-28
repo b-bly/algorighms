@@ -39,29 +39,30 @@ var _divide = function (dividend, divisor) {
 }
 
 var divide = function (dividend, divisor) {
-    const INT_MAX = 2 ** 31 - 1;
-    const INT_MIN = -(2 ** 31);
-
-    // Handle overflow
-    if (dividend === INT_MIN && divisor === -1) return INT_MAX;
-
-    // Determine sign
-    const negative = (dividend < 0) !== (divisor < 0);
-
-    // Convert to positive values using Math.abs (careful with INT_MIN)
-    let dvd = Math.abs(dividend);
-    let dvs = Math.abs(divisor);
-    let result = 0;
-
-    for (let i = 31; i >= 0; i--) {
-        if ((dvd >>> i) >= dvs) {
-            result += 1 << i;
-            dvd -= dvs << i;
-        }
+  const INT_MAX = 2 ** 31 - 1
+  const INT_MIN = - (2 ** 31)
+  if (dividend === INT_MIN && divisor === -1) {
+    return INT_MAX
+  }
+  const isNegative = (dividend < 0) !== (divisor < 0)
+  let result = 0
+  let _dividend = Math.abs(dividend)
+  let _divisor = Math.abs(divisor)
+  while(_dividend >= _divisor) {
+    let chunkDivisor = _divisor;
+    let multiple = 1
+    while (_dividend >= (chunkDivisor << 1)) {
+      chunkDivisor <<= 1
+      multiple <<= 1
     }
-
-    return negative ? -result : result;
-};
+    result += multiple
+    _dividend -= chunkDivisor
+  }
+  if (isNegative) {
+    result = -(result)
+  }
+  return result
+}
 // Example 1:
 
 const dividend = 7
