@@ -9,6 +9,10 @@ var longestSubstring = function (s, k) {
     const findLongest = (start, end) => {
         // make freq dictionary
         const charFreq = {}
+        for (let i = start; i < end; i++) {
+          const char = s[i]
+          charFreq[char] = charFreq[char] ? charFreq[char] + 1 : 1
+        }
 
         // loop increasing left
         for (let left = start; left < end; left++) {
@@ -20,9 +24,6 @@ var longestSubstring = function (s, k) {
                     // while left char does not repeat at least k times (freq < k) and left < end, nextLeft++
                     nextLeft++
                 }
-                // leftSearch = findLongest(start, left)
-                // rightSearch = findLongest(nextLeft)
-                // return max of leftSearch, rightSearch
                 const leftSearch = findLongest(start, left)
                 const rightSearch = findLongest(nextLeft, end)
                 return Math.max(leftSearch, rightSearch)
