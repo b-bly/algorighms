@@ -29,10 +29,11 @@ var addTwoNumbers = function(l1, l2) {
     return dummy.next
 };
 
-function ListNode(val, next) {
-    this.val = (val===undefined ? 0 : val)
-    this.next = (next===undefined ? null : next)
+function ListNode(val = 0, next = null) {
+    this.val = val
+    this.next = next
 }
+
 
 const node3 = new ListNode(3);
 const node2 = new ListNode(4, node3); // Node 2 points to node 3
@@ -56,3 +57,7 @@ const l2 = new ListNode(5, _node2)
 
 let result = addTwoNumbers(l1, l2)
 console.log(result)
+while(result) {
+  console.log(result.val)
+  result = result.next
+}

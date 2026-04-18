@@ -6,10 +6,10 @@ const ListNode = require('./util/ListNode.js')
  * @param {ListNode} list2
  * @return {ListNode}
  */
-var mergeTwoLists = function (list1, list2) {
+var _mergeTwoLists = function (list1, list2) {
   const dummy = new ListNode(0)
   let current = dummy
-  while(list1 !== null & list2 !== null) {
+  while(list1 !== null && list2 !== null) {
     if (list1.val < list2.val) {
       current.next = list1
       list1 = list1.next

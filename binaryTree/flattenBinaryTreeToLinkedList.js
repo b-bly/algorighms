@@ -102,3 +102,4 @@ while (result !== null) {
     console.log(result.val)
     result = result.right
 }
+
