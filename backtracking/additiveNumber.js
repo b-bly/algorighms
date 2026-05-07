@@ -3,35 +3,23 @@
  * @return {boolean}
  */
 var isAdditiveNumber = function (num) {
-    let result = false
-    if (num.length < 3) return false
-    const backtrack = (_start, a) => {
-        // succes check
-        if (_start === num.length) {
-            result = true
-            return
-        }
-        if (_start + 2 > num.length) return
-
-        for (let end = _start + 1; end < num.length; end++) {
-            // assign
-            const b = num.slice(_start, end)
-            const sum = Number(a) + Number(b)
-            if (num[end] === '0') continue // skip cand leading zero
-            // explore
-            for (let sumEnd = end + 1; sumEnd <= num.length; sumEnd++) {
-                const cand = Number(num.slice(end, sumEnd))
-                // console.log(`a ${a} b ${b} sum ${sum} cand ${cand}`)
-                if (sum === cand) {
-                    if (sumEnd === num.length) result = true
-                    backtrack(end, b)
-                    break
-                }
-            }
-        }
+  const search = (start, a, b) => {
+    if (start === num.length) return true
+    const sum = (BigInt(a) + BigInt(b)).toString()
+    const cand = num.slice(start, start + sum.length)
+    if (sum !== cand) return false
+    return search(start + sum.length, b, sum)  
+  }
+  for(let i = 0; i <= num.length - 2; i++) {
+    for (let j = 0; j <= num.length - 1; j++) {
+      const a = num.slice(0, i)
+      const b = num.slice(i, j)
+      if (a.length > 1 && a[0] === 0) continue
+      if (b.length > 1 && b[0] === 0) continue
+      if (search(j, a, b) === true) return true
     }
-    backtrack(1, num[0])
-    return result
+  }
+  return false
 }
 
 let num = '112358'
@@ -41,7 +29,7 @@ let num = '112358'
 // 1 + 1 = 2, 1 + 2 = 3, 2 + 3 = 5, 3 + 5 = 8
 // Example 2:
 
-// num = '199100199'
+num = '199100199'
 // Output: true
 //1, 99, 100, 199.
 
