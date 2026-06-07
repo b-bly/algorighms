@@ -3,17 +3,22 @@
  * @return {string}
  */
 var removeDuplicateLetters = function (s) {
-  let arr = s.split('').sort().join('')
-  let result = arr[0]
-  for(let i = 1; i < arr.length; i++) {
-    const a = arr[i - 1]
-    const b = arr[i]
-    if (a !== b) {
-      result += b
-    }
+  const last = {}
+  for(let i = 0; i < s.length; i++) {
+    last[s[i]] = i
   }
-
-  return result
+  const seen = new Set()
+  const stack = []
+  for(let i = 0; i < s.length; i++) {
+    const ch = s[i]
+    if(seen.has(ch)) continue
+    while(stack.length > 0 && ch < stack[stack.length - 1] && i < last[stack[stack.length - 1]]) {
+      seen.delete(stack.pop())
+    }
+    seen.add(ch)
+    stack.push(ch)
+  }
+  return stack.join('')
 }
 
 let s = "bcabc"
